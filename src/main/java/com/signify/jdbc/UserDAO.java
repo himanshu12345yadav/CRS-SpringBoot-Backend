@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.UUID;
 
 import org.springframework.stereotype.Repository;
 
@@ -93,23 +94,35 @@ public class UserDAO implements IUserDAO {
 	public void registerUser(User usr) throws UserAlreadyExistsException {
 		Connection conn;
 		PreparedStatement st;
+		String userId = UUID.randomUUID().toString();
+		int roleId = 0;
+		if(usr instanceof Student) {
+			roleId = DBConstants.STUDENT_ROLE_ID;
+		}
+		else if(usr instanceof Admin) {
+			roleId = DBConstants.ADMIN_ROLE_ID;
+		}
+		else if(usr instanceof Professor) {
+			roleId = DBConstants.PROFESSOR_ROLE_ID;
+		}
+		
 		try {
 			conn = DBUtils.getConnection();
 			st = conn.prepareStatement(DBConstants.REGISTER_USER);
 
-			st.setString(1, usr.getUserId());
+			st.setString(1, userId);
 			st.setString(2, usr.getUsername());
 			st.setString(3, usr.getPassword());
 			st.setString(4, usr.getAddress());
 			st.setDate(5, Date.valueOf(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))));
-			st.setInt(6, usr.getRoleid());
+			st.setInt(6, roleId);
 			st.executeUpdate();
 
 			PreparedStatement user_query;
 
 			if (usr instanceof Student) {
 				user_query = conn.prepareStatement(DBConstants.REGISTER_STUDENT);
-				user_query.setString(1, usr.getUserId());
+				user_query.setString(1, userId);
 				user_query.setString(2, ((Student) usr).getStudentId());
 				user_query.setString(3, usr.getUsername());
 				user_query.setString(4, ((Student) usr).getBranch());
@@ -123,7 +136,7 @@ public class UserDAO implements IUserDAO {
 				user_query.executeUpdate();
 			} else if (usr instanceof Professor) {
 				user_query = conn.prepareStatement(DBConstants.REGISTER_PROFESSOR);
-				user_query.setString(1, usr.getUserId());
+				user_query.setString(1, userId);
 				user_query.setString(2, usr.getUsername());
 				user_query.setString(3, ((Professor) usr).getDepartment());
 				user_query.setString(4, ((Professor) usr).getDepartment());
@@ -131,7 +144,7 @@ public class UserDAO implements IUserDAO {
 				user_query.executeUpdate();
 			} else if (usr instanceof Admin) {
 				user_query = conn.prepareStatement(DBConstants.REGISTER_ADMIN);
-				user_query.setString(1, usr.getUserId());
+				user_query.setString(1, userId);
 				user_query.setString(2, usr.getUsername());
 				user_query.executeUpdate();
 			}

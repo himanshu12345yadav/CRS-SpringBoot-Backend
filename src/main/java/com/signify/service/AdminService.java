@@ -15,12 +15,15 @@ import com.signify.exception.CourseNotRegisteredException;
 import com.signify.exception.UserAlreadyExistsException;
 import com.signify.exception.UserNotFoundException;
 import com.signify.jdbc.AdminDAO;
+import com.signify.jdbc.UserDAO;
 
 @Service
 public class AdminService extends UserService implements AdminInterface {
 	
 	@Autowired
 	private AdminDAO admindao;
+	@Autowired
+	private UserDAO userdao;
 	
 	@Override
 	public void generateReportCard(String studentId) throws UserNotFoundException {
@@ -54,7 +57,6 @@ public class AdminService extends UserService implements AdminInterface {
 
 	@Override
 	public double calculateCpi(String studentId) throws UserNotFoundException, CourseNotRegisteredException {
-		
 		return admindao.calculateCpi(studentId);
 	}
 
@@ -65,37 +67,31 @@ public class AdminService extends UserService implements AdminInterface {
 
 	@Override
 	public void addProfessor(Professor professor) throws UserAlreadyExistsException {
-		UserService userService = new UserService();
-		userService.register(professor);
+		userdao.registerUser(professor);
 	}
 
 	@Override
 	public List<Professor> getProfessors() {
-		AdminDAO ad = new AdminDAO();
-		return ad.getProfessors();
+		return admindao.getProfessors();
 	}
 
 	@Override
 	public void addAdmin(Admin admin) throws UserAlreadyExistsException {
-		UserService userService = new UserService();
-		userService.register(admin);
+		userdao.registerUser(admin);
 	}
 
 	@Override
 	public List<Admin> getAdmins() {
-		AdminDAO ad = new AdminDAO();
-		return ad.getAdmins();
+		return admindao.getAdmins();
 	}
 
 	@Override
 	public void approveAllStudents() {
-		AdminDAO ad = new AdminDAO();
-		ad.approveAllStudents();
+		admindao.approveAllStudents();
 	}
 
 	@Override
 	public void approveStudentById(String studentId) throws UserNotFoundException {
-		AdminDAO ad = new AdminDAO();
-		ad.approveStudentById(studentId);
+		admindao.approveStudentById(studentId);
 	}
 }

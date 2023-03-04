@@ -10,12 +10,15 @@ import com.signify.bean.Course;
 import com.signify.bean.OfflinePayment;
 import com.signify.bean.OnlinePayment;
 import com.signify.bean.RegisteredCourse;
+import com.signify.bean.Student;
 import com.signify.exception.CourseLimitExceedException;
 import com.signify.exception.CourseNotFoundException;
 import com.signify.exception.SemesterNotRegisteredException;
 import com.signify.exception.StudentNotApprovedException;
 import com.signify.exception.StudentNotRegisteredException;
+import com.signify.exception.UserAlreadyExistsException;
 import com.signify.jdbc.StudentDAO;
+import com.signify.jdbc.UserDAO;
 
 @Service
 @Primary
@@ -23,11 +26,11 @@ public class StudentService extends UserService implements StudentInterface {
 
 	@Autowired
 	private StudentDAO studentdao;
+	private UserDAO userdao;
 
 	@Override
-	public void register() {
-		// ! CALL THE USER SERVICE REGISTATION
-		throw new UnsupportedOperationException("Unimplemented method 'register'");
+	public void register(Student student) throws UserAlreadyExistsException {
+		userdao.registerUser(student);
 	}
 
 	@Override

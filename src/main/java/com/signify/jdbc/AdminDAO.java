@@ -87,11 +87,11 @@ public class AdminDAO implements IAdminDAO {
 			st_course = conn.prepareStatement(DBConstants.UPDATE_PROFESSOR_IN_CATALOG);
 			st_course.setString(1, professorid);
 			st_course.setString(2, courseCode);
-			st_course.close();
-
+			st_course.executeUpdate();
+			
 			st.close();
+			st_course.close();
 		} catch (SQLException se) {
-			// ! NEEDS TO FIND A BETTER WAY
 			throw new CourseNotAssignedException();
 		}
 	}
@@ -142,6 +142,8 @@ public class AdminDAO implements IAdminDAO {
 				c.setCourseName(rs.getString("coursename"));
 				c.setInstructor(rs.getString("instructor"));
 				c.setFee(rs.getDouble("coursefee"));
+				c.setCapacity(rs.getInt("capacity"));
+				c.setSemester(rs.getInt("semester"));
 				cs.add(c);
 			}
 		} catch (SQLException se) {
